@@ -45,27 +45,21 @@ class DatabaseTablesWidget(QTreeWidget):
             self.app.db_manager.current_database = self.database_tables[item.name]
             self.app.db_manager.current_initial_table = item.name
             columns, rows, number_of_rows = self.app.db_manager.get_table_content()
-            #self.db_management_widget.rebuild_table_widget()
             self.db_management_widget.rebuild_table_widget()
             self.db_management_widget.current_database = self.database_tables[item.name]
             self.db_management_widget.current_table = item.name
             self.db_management_widget.render()
         elif isinstance(item, QTreeWidgetDatabaseItem):
-            #print("iok")
             self.app.db_manager.current_database = item.text(0)
             self.db_management_widget.current_database = item.text(0)
             self.db_management_widget.render()
-            #print(f"CURRENT DATABASE: {self.app.db_manager.current_database}")
 
 
     def database_selected(self, item):
-        #print(item.text())
         self.app.db_manager.current_database = item.text()
         tables = self.app.db_manager.get_database_tables()
-        #self.rebuild_dbs_tables()
 
     def table_selected(self, item):
-        #print(item.text())
         self.app.db_manager.current_initial_table = item.text()
         columns, rows, number_of_rows = self.app.db_manager.get_table_content()
         self.db_management_widget.rebuild_table_widget()

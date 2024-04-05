@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QLabel, QMessageBox, QVBoxLayout, QLineEdit, QWidget, QPushButton, QComboBox, QHBoxLayout, QCheckBox, QRadioButton
-from comboboxes import DatatypeComboBox, LogicOperatorCombobox, SignCombobox, AgregateFunctionsCombobox
+from PyQt5.QtWidgets import QDialog, QLabel, QMessageBox, QVBoxLayout, QLineEdit, QWidget, QPushButton, QComboBox, QHBoxLayout, QRadioButton
+from comboboxes import LogicOperatorCombobox, SignCombobox, AgregateFunctionsCombobox
 
 
 
@@ -41,15 +41,6 @@ class CreateQueryWindow(QDialog):
         query_button.clicked.connect(self.close_dialog)
         self.main_vbox.addWidget(query_button)
         
-
-
-    def create_menu_widget(self):
-        #vbox = QVBoxLayout()
-        ...
-        #self.menu_widget.setLayout(self.main_vbox)
-        #self.main_widget.addWidget(self.menu_widget)
-
-    #def create_agregate_fu
         
     def get_selected_groupable(self, selected_columns):
         selected_groupable_list = []
@@ -106,7 +97,6 @@ class CreateQueryWindow(QDialog):
         
     def create_agregate_function_combobox(self):
         agregate_function_combobox = AgregateFunctionsCombobox()
-        #sign_combobox.addItem("!=")
         return agregate_function_combobox
     
     def toggle_custom_input(self):
@@ -119,7 +109,6 @@ class CreateQueryWindow(QDialog):
 
     def set_condition(self, auto_apply=False):
         self.list_of_selected = self.get_selected_columns()
-        print(self.list_of_selected)
         if len(self.list_of_selected) == 0:
             self.show_no_columns_error()
         else:
@@ -138,14 +127,7 @@ class CreateQueryWindow(QDialog):
     def get_selected_columns(self):
         selected_columns = self.get_raw_selected_columns()
         selected_columns = self.preprocess_selected_columns(selected_columns)
-        print(selected_columns)
         return selected_columns
-    """def define_group_by(self):
-        list_of_selected = [x for x in self.inputs.keys() if self.inputs[x].isChecked()]
-        if len(list_of_selected) == 0:
-            self.show_no_columns_error()
-        else:
-            query_group_by_window = QueryGroupByWindow(self, list_of_selected)"""
     
     def get_condition_column_options(self):
         options = self.app.db_manager.initial_table_column_names
@@ -154,23 +136,9 @@ class CreateQueryWindow(QDialog):
 
     def close_dialog(self):
         self.close()
-        #print(self.condition)
-        #print(self.inputs)
         self.selected_groupable = self.get_selected_groupable(self.get_raw_selected_columns())
-        #queried_columns = [column for column in self.inputs.keys() if self.inputs[column].isChecked()]
         queried_columns = self.get_selected_columns()
-        """if self.custom_column:
-            custom_select = self.custom_column_input.text()
-        else:
-            custom_select = None"""
-        #self.app.db_manager.slice_current_table(queried_columns, self.condition, custom_select=custom_select)
-        """if self.query_condition_window is not None:
-            queried_columns = [name for name in self.query_condition_window.selected_names
-                           if self.query_condition_window.selected_names[name] in self.list_of_selected]"""
-        print(queried_columns)
-        print(self.selected_groupable)
         self.app.db_manager.slice_current_table(queried_columns, self.condition)
-        #self.app.main_widget.widget(2).rebuild_table_widget()
 
 
     def show_no_columns_error(self):
@@ -187,7 +155,6 @@ class QueryConditionWindow(QDialog):
     def __init__(self, query_window, all_columns, selected_columns, auto_apply):
         super().__init__()
         self.query_window = query_window
-        #self.selected_columns = all_columns
         self.setWindowTitle("Insert condition")
         self.setGeometry(200, 200, 300, 200)
         self.main_layout = QVBoxLayout()
@@ -195,9 +162,7 @@ class QueryConditionWindow(QDialog):
         self.condition_options_list = []
         self.selected_list = {}
         self.keyword_condition_dict = self.get_keyword_condition_dict(all_columns)
-        #self.selected_preprocessed_list = {}
         self.selected_columns = selected_columns
-        #self.condition = None
         self.create_ui()
         self.exec()
         if auto_apply:
@@ -218,7 +183,6 @@ class QueryConditionWindow(QDialog):
     def create_condition_option(self, additional=False):
         condition_option_row = ConditionOptionRow(self, additional)
         self.condition_options_list.append(condition_option_row)
-        #self.main_layout.addWidget(option_widget)
         self.conditions_layout.addWidget(condition_option_row)
 
     def create_conditions_layout(self):
@@ -262,23 +226,18 @@ class QueryConditionWindow(QDialog):
         having_condition = ""
         for option in self.condition_options_list:
             returned_condition = option.return_condition()
-            print(returned_condition)
             if self.keyword_condition_dict[returned_condition[1]] == "WHERE":
                 if where_condition != "":
                     where_condition += returned_condition[2]
                     where_condition += " "
                 where_condition += returned_condition[0]
             elif self.keyword_condition_dict[returned_condition[1]] == "HAVING":
-                #group_query = True
                 if having_condition != "":
                     having_condition += returned_condition[2]
                     having_condition += " "
                 having_condition += returned_condition[0]
-        #print(condition)
         if where_condition != "":
             self.query_window.condition["WHERE"] = where_condition
-        #if group_by_condition != "":
-        #if group_query:
         self.query_window.condition["GROUP BY"] = self.return_group_by()
         if having_condition != "":
             self.query_window.condition["HAVING"] = having_condition
@@ -286,7 +245,6 @@ class QueryConditionWindow(QDialog):
         x = self.query_window.condition["WHERE"]
         y = self.query_window.condition["GROUP BY"]
         z = self.query_window.condition["HAVING"]
-        print(f"WHERE {x} GROUP BY {y} HAVING {z}")
         self.close_dialog()
 
     def return_group_by(self):
@@ -309,9 +267,6 @@ class QueryConditionWindow(QDialog):
     def close_dialog(self):
         self.close()
 
-    
-
-
 
 class ConditionOptionRow(QWidget):
 
@@ -331,11 +286,6 @@ class ConditionOptionRow(QWidget):
         self.delete_button.clicked.connect(self.delete_row)
         self.layout.addWidget(self.delete_button)
         if self.additional:
-            """self.and_or_box = QComboBox()
-            self.and_or_box.setFixedWidth(50)
-            self.and_or_box.addItem("AND")
-            self.and_or_box.addItem("OR")
-            self.layout.addWidget(self.and_or_box)"""
             self.and_or_box = LogicOperatorCombobox()
             self.layout.addWidget(self.and_or_box)
         self.columns = QComboBox()
@@ -349,14 +299,6 @@ class ConditionOptionRow(QWidget):
         self.layout.addWidget(self.condition_input)
 
     def create_sign_combobox(self):
-        """sign_combobox = QComboBox()
-        sign_combobox.setFixedWidth(50)
-        sign_combobox.addItem("<")
-        sign_combobox.addItem("<=")
-        sign_combobox.addItem("=")
-        sign_combobox.addItem(">=")
-        sign_combobox.addItem(">")
-        sign_combobox.addItem("!=")"""
         sign_combobox = SignCombobox()
         self.layout.addWidget(sign_combobox)
         return sign_combobox

@@ -104,7 +104,7 @@ class DbManagementWidget(QWidget):
         if self.app.db_manager.current_database is not None:
             table_window = table_creator.CreateTableWindow(self.app)
         else:
-            print("No database selected")
+            ...
     
     def delete_table(self):
         return table_creator.DeleteTableWindow(self.app)

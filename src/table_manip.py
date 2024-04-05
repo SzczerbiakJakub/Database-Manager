@@ -52,12 +52,8 @@ class DeleteRowWindow(QDialog):
 
     def create_ui(self):
         self.setLayout(self.layout)
-        #self.input = QComboBox()
-        #for x in self.app.db_manager.table_names:
-        #    self.input.addItem(x)
         self.build_options_widget()
         self.add_option_row()
-        #vbox.addWidget(self.input)
         add_condition_button = QPushButton("Add condition", self)
         add_condition_button.setGeometry(100, 100, 100, 30)
         add_condition_button.clicked.connect(self.add_option_row)
@@ -66,7 +62,6 @@ class DeleteRowWindow(QDialog):
         button.setGeometry(100, 100, 100, 30)
         button.clicked.connect(self.close_dialog)
         self.layout.addWidget(button)
-        #self.setLayout(vbox)
         
     def build_options_widget(self):
         self.options_widget = QWidget()
@@ -121,7 +116,7 @@ class DeleteRowOption(QWidget):
         self.condition_input = QLineEdit()
         self.layout.addWidget(self.condition_input)
 
-    #def build_option_combobox(self):
+
     def get_delete_condition(self):
         and_or_box_output = ""
         if self.and_or_box is not None:
@@ -190,7 +185,6 @@ class CreateColumnWindow(QDialog):
         layout.addWidget(label)
         layout.addWidget(variable_input)
         self.default_variable = variable_input
-        #self.inputs.update({"data variable" : data_type_variable_input})
         variable_widget.setLayout(layout)
         return variable_widget
 
@@ -233,7 +227,6 @@ class CreateColumnWindow(QDialog):
         self.app.main_widget.widget(1).rebuild_table_widget()
         db_tables_tree_widgets = self.app.main_widget.widget(1).db_tables_tree_widgets
         db_tables_tree_widgets.refresh_modified_table(self.app.db_manager.current_initial_table)
-        #self.app.main_widget.widget(2).rebuild_db_tables_widget()
 
 
 class DeleteColumnWindow(QDialog):
@@ -266,5 +259,3 @@ class DeleteColumnWindow(QDialog):
         self.app.main_widget.widget(1).rebuild_table_widget()
         db_tables_tree_widgets = self.app.main_widget.widget(1).db_tables_tree_widgets
         db_tables_tree_widgets.refresh_modified_table(self.app.db_manager.current_initial_table)
-        #self.app.main_widget.widget(2).db_tables_tree_widgets.tables_items_dict
-        #self.app.main_widget.widget(2).rebuild_db_tables_widget()

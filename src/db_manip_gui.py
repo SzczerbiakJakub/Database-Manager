@@ -42,7 +42,6 @@ class DeleteDatabaseWindow(QDialog):
         self.input = QComboBox()
         for x in self.app.db_manager.get_databases():
             self.input.addItem(x[0])
-            #list_widget.setItemWidget(item, x_label)
         vbox.addWidget(self.input)
         button = QPushButton("Delete", self)
         button.setGeometry(100, 100, 100, 30)

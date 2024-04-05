@@ -1,4 +1,3 @@
-
 class DataTypes:
 
     data_types = {'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'FLOAT',

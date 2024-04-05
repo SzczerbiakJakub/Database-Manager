@@ -1,6 +1,4 @@
-from PyQt5.QtWidgets import QTreeWidget, QMessageBox, QFileDialog, QTreeWidgetItem, QRadioButton, QCheckBox, QComboBox, QDialog, QDesktopWidget, QMainWindow, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QPushButton, QLineEdit, QListWidget, QStackedWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import Qt
-import pandas as pd
+from PyQt5.QtWidgets import QMessageBox, QDesktopWidget, QMainWindow, QHBoxLayout, QWidget, QPushButton, QStackedWidget
 import login_gui as login
 import db_manager_gui as db_manager
 
@@ -50,7 +48,6 @@ class MainWindow(QMainWindow):
         
             
     def retry(self, function, parameters):
-        print("retry")
         function(parameters[0], parameters[1], parameters[2])
 
 

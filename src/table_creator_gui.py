@@ -6,13 +6,6 @@ import csv_manip
 
 class CreateTableWindow(QDialog):
 
-    """data_types = {'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'FLOAT',
-                    'CHAR', 'VARCHAR', 'TEXT', 'TIME', 'DATE', 'TIMESTAMP',
-                    'INTERVAL', 'BOOLEAN', 'BINARY', 'VARBINARY', 'BYTEA',
-                    'ARRAY', 'JSON', 'UUID', 'XML', 'GEOMETRY'}
-    
-    var_data_types = {'CHAR', 'VARCHAR', 'BINARY', 'VARBINARY'}"""
-
     def __init__(self, parent):
         super().__init__(parent)
         self.app = parent
@@ -86,7 +79,6 @@ class CreateTableWindow(QDialog):
         table_name = self.table_name.text()
         self.app.db_manager.create_new_table(table_name, option_list, current_database=current_database)
         self.app.main_widget.widget(1).rebuild_db_tables_widget()
-        #if self.csv_filename is not None:
         if self.from_csv:
             column_names = tuple(zip([x[0] for x in option_list], options_data_types))
             self.app.db_manager.create_new_rows_from_csv(table_name, column_names, self.csv_filename, current_database=current_database)
@@ -164,15 +156,11 @@ class CreateTableOptionRow(QWidget):
         #   LINE EDIT INPUT
         data_type_variable_input = QLineEdit()
         #   DATA TYPE INPUT
-        data_type_input = DatatypeComboBox(data_type_variable_input)#QComboBox()
-        #self.add_options_to_combobox(data_type_input)
+        data_type_input = DatatypeComboBox(data_type_variable_input)
         if category is not None:
             data_type_input.set_datatype_from_category(category[1])
-        #data_type_input.currentIndexChanged.connect(data_type_input.toggle_line_edit)
         hbox.addWidget(data_type_input)
-        #data_type_input.toggle_line_edit()
         row_inputs.update({"data type" : data_type_input})
-        #row_inputs.append(data_type_input)
         hbox.addWidget(data_type_variable_input)
         row_inputs.update({"data variable" : data_type_variable_input})
         #   NOT NULL INPUT
@@ -180,13 +168,11 @@ class CreateTableOptionRow(QWidget):
         not_null_checkbox.setChecked(True)
         hbox.addWidget(not_null_checkbox)
         row_inputs.update({"not null" : not_null_checkbox})
-        #row_inputs.append(not_null_checkbox)
         #   SERIAL INPUT
         serial_checkbox = QCheckBox('SERIAL', self)
         serial_checkbox.setChecked(False)
         hbox.addWidget(serial_checkbox)
         row_inputs.update({"serial" : serial_checkbox})
-        #row_inputs.append(serial_checkbox)
         #   PRIMARY KEY INPUT
         primary_key_radiobutton = QRadioButton('PRIMARY KEY', self)
         primary_key_radiobutton.clicked.connect(self.set_primary_key)
@@ -225,10 +211,8 @@ class DeleteTableWindow(QDialog):
         vbox = QVBoxLayout()
         self.input = QComboBox()
         self.app.db_manager.get_database_tables(self.app.main_widget.widget(1).current_database)
-        #print(self.app.db_manager.table_names)
         for x in self.app.db_manager.table_names:
             self.input.addItem(x)
-            #list_widget.setItemWidget(item, x_label)
         vbox.addWidget(self.input)
         button = QPushButton("Delete", self)
         button.setGeometry(100, 100, 100, 30)
@@ -236,7 +220,6 @@ class DeleteTableWindow(QDialog):
         vbox.addWidget(button)
         self.setLayout(vbox)
         
-
     def close_dialog(self):
         self.close()
         self.app.db_manager.delete_table(self.input.currentText(), self.app.main_widget.widget(1).current_database)

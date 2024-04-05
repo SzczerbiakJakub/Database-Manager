@@ -1,7 +1,6 @@
 import psycopg2
 from psycopg2 import Error
 import time
-import pandas as pd
 import csv_manip
     
 
@@ -34,8 +33,8 @@ class DBManager:
         try:
             connection = psycopg2.connect(**params)
         except(Exception, psycopg2.DatabaseError) as error:
-            print(error)
-        
+            ...
+            
         cur = connection.cursor()
         cur.execute("SELECT version()")
         db_version = cur.fetchone()
@@ -53,10 +52,9 @@ class DBManager:
             db_version = cur.fetchone()
             cur.close()
             connection.close()
-            print(db_version)
             connected = True
         except(Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            ...
         
         return connected
     
@@ -70,7 +68,6 @@ class DBManager:
         connection = self.connect()
         cur = connection.cursor()
 
-        # SQL query to retrieve all databases
         query = "SELECT datname FROM pg_database WHERE datistemplate = false;"
 
         cur.execute(query)
@@ -106,7 +103,6 @@ class DBManager:
 
             self.table_names = tables
         except Error as e:
-            print("Error while connecting to PostgreSQL:", e)
             self.raise_error(e, database_name=database)
         
         return tables
@@ -131,7 +127,6 @@ class DBManager:
             self.initial_table_column_names = columns
             
         except Error as e:
-            print("Error while connecting to PostgreSQL:", e)
             self.raise_error(e, database_name=current_database)
         
         return columns
@@ -162,7 +157,6 @@ class DBManager:
             return columns, rows, len(rows)
         
         except Error as e:
-            print("Error while connecting to PostgreSQL:", e)
             self.raise_error(e, database_name=current_database)
             return columns, rows, 0
         
@@ -204,13 +198,11 @@ class DBManager:
         connection.commit()
 
         while not self.table_exists(table_name, cur):
-            time.sleep(1)  # Sleep for 1 second
+            time.sleep(1)
 
-        print(f"CREATED TABLE {table_name}")
 
         cur.close()
         connection.close()
-        #iok = self.get_database_tables()
         self.current_initial_table = table_name
         self.app.main_widget.widget(1).current_table = table_name
         
@@ -248,13 +240,10 @@ class DBManager:
 
     def create_new_rows_from_csv(self, table_name, columns, csv_filename, current_database=None):
         row_number = None
-        #time.sleep(4)  # Sleep for 1 second
         try:
             connection = self.connect(dbname=current_database)
             cur = connection.cursor()
             connection.autocommit = True
-
-            print(self.table_exists(table_name, cur))
             
             df = csv_manip.get_dataframe(csv_filename)
             
@@ -263,11 +252,8 @@ class DBManager:
             column_names = [x[0] for x in columns]
             data_types = [x[1] for x in columns]
             column_names_string = ", ".join(column_names)
-            print("CREATING NEW ROWS FROM CSV")
 
             for i, row in enumerate(values_list):
-                if i%5000 == 0:
-                    print(i)
                 values_list = []
                 for ii, data_type in enumerate(data_types):
                     if "VARCHAR" in data_type or "CHAR" in data_type:
@@ -281,15 +267,11 @@ class DBManager:
                 values_list = [str(x) for x in values_list]
                 values = ", ".join(values_list)
                 
-                #query = f"INSERT INTO {table_name} ({column_names_string}) VALUES ({values}) ;"
                 query = f"INSERT INTO {self.current_initial_table} ({column_names_string}) VALUES ({values}) ;"
                 row_number = row
                 cur.execute(query)
                 connection.commit()
 
-            #cur.close()
-            #connection.close()
-            #self.get_table_columns(table=table_name, current_database=current_database)
         except Error as e:
             parameters = (table_name, columns, csv_filename)
             self.raise_error(e, function=self.create_new_rows_from_csv, parameters=parameters, row_number=row_number)
@@ -304,7 +286,6 @@ class DBManager:
         connection = self.connect()
         cur = connection.cursor()
         connection.autocommit = True
-        #print(inputs)
         columns = ", ".join([colum for colum in list(inputs.keys())])
         values = [str("'" + value.text() + "'") if isinstance(value.text(), str) else value.text() for value in list(inputs.values())]
         values = ", ".join([value for value in values])
@@ -317,14 +298,12 @@ class DBManager:
         connection.close()
         self.initial_table_rows_size += 1
         self.get_table_columns()
-        #self.app.main_widget.widget(2).rebuild_table_widget()
 
 
     def delete_row(self, condition):
         connection = self.connect()
         cur = connection.cursor()
         connection.autocommit = True
-        print(f"INSIDE DB: {condition}")
         query = f"DELETE FROM {self.current_initial_table} \
                 WHERE {condition} ;"
         cur.execute(query)
@@ -333,8 +312,6 @@ class DBManager:
         connection.close()
         if self.initial_table_rows_size > 0:
             self.initial_table_rows_size -= 0
-
-        #self.app.main_widget.widget(2).rebuild_table_widget()
 
 
     def slice_current_table(self, list_of_columns, condition, custom_select = None):
@@ -359,7 +336,6 @@ class DBManager:
         if having_condition is not None:
             query += f" HAVING {having_condition}"
         query += ' ;'
-        print(query)
         cur = connection.cursor()
         connection.autocommit = True
         cur.execute(query)
@@ -380,7 +356,6 @@ class DBManager:
         connection = self.connect()
         cur = connection.cursor()
         connection.autocommit = True
-        #print(inputs)
 
         name = inputs["name"]
         data = inputs["data"]
@@ -391,16 +366,9 @@ class DBManager:
         constraints_input_keys.remove("variable")
 
         constraints_values = " ".join(inputs[value] for value in constraints_input_keys)
-        
-        """if inputs["data variable"] != "":
-            data_input = f"{inputs["data type"]}({inputs["data variable"]})"
-        else:
-            data_input = f"{inputs["data type"]}" """
 
         query = f"ALTER TABLE {self.current_initial_table} ADD {name} {data} {constraints_values} DEFAULT {variable} ;"
                 
-        
-        #print(query)
         cur.execute(query)
         connection.commit()
 
@@ -408,7 +376,6 @@ class DBManager:
 
         cur.close()
         connection.close()
-        #self.app.main_widget.widget(2).rebuild_table_widget()
 
 
     def delete_column(self, input, queried_table):
@@ -418,7 +385,6 @@ class DBManager:
 
         query = f"ALTER TABLE {self.current_initial_table} DROP COLUMN {input} ;"
 
-        #print(query)
         self.initial_table_column_names.remove(input)
         cur.execute(query)
         connection.commit()
@@ -435,7 +401,6 @@ class DBManager:
         cur.execute(query)
 
         output = cur.fetchall
-        print(output)
 
         cur.close()
         connection.close()
@@ -450,7 +415,6 @@ class DBManager:
         cur.execute(query)
 
         width = cur.fetchone()[0]
-        print(width)
 
         cur.close()
         connection.close()
@@ -466,7 +430,6 @@ class DBManager:
         cur.execute(query)
 
         height = cur.fetchone()[0]
-        print(height)
 
         cur.close()
         connection.close()
