@@ -27,6 +27,8 @@ class HomeWidget(QLabel):
 
 class HomeHeaderWidget(QLabel):
 
+    logo = "..\img\logo.png"
+
     def __init__(self, home_widget):
         super().__init__()
         self.home_widget = home_widget
@@ -37,7 +39,7 @@ class HomeHeaderWidget(QLabel):
         
     def build_ui(self):
         self.setLayout(self.main_layout)
-        logo = QPixmap("..\img\logo.png")
+        logo = QPixmap(HomeHeaderWidget.logo)
         self.setPixmap(logo)
 
 
@@ -88,9 +90,3 @@ class AppDescriptionWidget(QWidget):
         self.main_layout.addWidget(self.main_description_widget)
         palceholder = descriptions.Placeholder(self)
         self.main_layout.addWidget(palceholder)
-        
-
-    
-
-
-

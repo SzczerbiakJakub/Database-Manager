@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QStackedWidget
+from PyQt5.QtGui import QIcon
 import home_widget_gui as home
 import db_manager_gui as db_manager
 from error_handler import ErrorBox
@@ -6,9 +7,12 @@ from error_handler import ErrorBox
 
 class MainWindow(QMainWindow):
 
+    icon = "..\img\icon.png"
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("DB Manager")
+        self.setWindowIcon(QIcon(MainWindow.icon)) 
         self.screen_width, self.screen_height = self.get_screen_size()
         #self.setGeometry(0, 0, self.screen_width, self.screen_height)
         self.db_manager = None
