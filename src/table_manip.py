@@ -112,17 +112,47 @@ class DeleteRowOption(QWidget):
         self.option_combobox = TableColumnsCombobox(self.app)
         self.layout.addWidget(self.option_combobox)
         self.sign_combobox = SignCombobox()
+        self.sign_combobox.currentTextChanged.connect(self.toggle_condition_input)
         self.layout.addWidget(self.sign_combobox)
         self.condition_input = QLineEdit()
         self.layout.addWidget(self.condition_input)
 
 
+    def toggle_condition_input(self):
+        if self.sign_combobox.currentText() == "IS NULL" or self.sign_combobox.currentText() == "IS NOT NULL":
+            self.condition_input.setText("")
+            self.condition_input.setEnabled(False)
+        else:
+            self.condition_input.setEnabled(True)
+
+
     def get_delete_condition(self):
         and_or_box_output = ""
+        condition = ""
         if self.and_or_box is not None:
             and_or_box_output = self.and_or_box.currentText()
-        return f"{and_or_box_output} {self.option_combobox.currentText()} {self.sign_combobox.currentText()} {self.condition_input.text()}"
         
+        list_of_inputs = [
+                            and_or_box_output,
+                            self.option_combobox.currentText(),
+                            self.sign_combobox.currentText()
+                        ]
+        if self.sign_combobox.currentText() == "BETWEEN":
+            preprocessed_condition_input = self.condition_input.text().replace(",", " AND ")
+            """if len(split_condition_input) == 2:
+                list_of_inputs.append(split_condition_input[0])
+                list_of_inputs.append("AND")
+                list_of_inputs.append(split_condition_input)"""
+            list_of_inputs.append(preprocessed_condition_input)
+        elif self.sign_combobox.currentText() == "IN" or self.sign_combobox.currentText() == "NOT IN":
+            list_of_inputs.append(f"({preprocessed_condition_input})")
+        else:
+            list_of_inputs.append(self.condition_input.text())
+            #condition = f"{and_or_box_output} {self.option_combobox.currentText()} {self.sign_combobox.currentText()} {self.condition_input.text()}"
+        condition = " ".join(list_of_inputs)
+        return condition
+
+
     def delete_option(self):
         self.parent.inputs.remove(self)
         self.deleteLater()

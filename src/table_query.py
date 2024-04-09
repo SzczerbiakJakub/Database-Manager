@@ -326,7 +326,15 @@ class ConditionOptionRow(QWidget):
             condition += " "
             condition += self.sign_combobox.currentText()
             condition += " "
-            condition += self.condition_input.text()
+            if self.sign_combobox.currentText() == "BETWEEN":
+                preprocessed_condition_input = self.condition_input.text().replace(",", " AND ")
+                condition += preprocessed_condition_input
+            elif self.sign_combobox.currentText() == "IN" or self.sign_combobox.currentText() == "NOT IN": 
+                condition += f"({preprocessed_condition_input})"
+            else:
+                condition += self.condition_input.text()
             condition += " "
+            #condition += self.condition_input.text()
+            #condition += " "
 
         return (condition, self.columns.currentText(), and_or_prefix)

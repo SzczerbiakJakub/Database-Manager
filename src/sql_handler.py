@@ -2,10 +2,13 @@ import psycopg2
 from psycopg2 import Error
 import time
 import csv_manip
+import re
     
 
 
 class DBManager:
+
+    syntax_valid_characters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz_0123456789"
 
     def __init__(self, app, params):
         self.app = app
@@ -186,13 +189,28 @@ class DBManager:
             self.raise_error(e, database_name=database_name)
 
 
+    @staticmethod
+    def preprocess_name(name):
+        for character in name:
+            if character not in DBManager.syntax_valid_characters:
+                name = name.replace(character, "")
+        name = re.sub(r'\s+', '', name)
+        return name
+
+    @staticmethod
+    def preprocess_columns_names(option_list):
+        for name in option_list:
+            name[0] = DBManager.preprocess_name(name[0])
+        return option_list
+
+
     def create_new_table(self, table_name, option_list, csv_filename = None, current_database=None):
         connection = self.connect(dbname=current_database)
         cur = connection.cursor()
         connection.autocommit = True
+        option_list = DBManager.preprocess_columns_names(option_list)
         columns = ", ".join(" ".join(y for y in x) for x in option_list)
-        query = f"CREATE TABLE {table_name} \
-                ({columns}); "
+        query = f"CREATE TABLE {table_name} ({columns}) ;"
         cur.execute(query)
 
         connection.commit()

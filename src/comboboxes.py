@@ -72,11 +72,11 @@ class LogicOperatorCombobox(QComboBox):
 
 class SignCombobox(QComboBox):
 
-    signs = ['<', '<=', '=', '>=', '>', '!=']
+    signs = ['<', '<=', '=', '>=', '>', '!=', 'LIKE', 'IN', 'NOT IN', 'BETWEEN', 'IS NULL', 'IS NOT NULL']
 
     def __init__(self):
         super().__init__()
-        self.setFixedWidth(50)
+        self.setFixedWidth(90)
         self.add_options()
 
     def add_options(self):
