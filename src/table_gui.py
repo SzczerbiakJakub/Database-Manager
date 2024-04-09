@@ -90,7 +90,6 @@ class Table(QTableWidget):
         super().__init__()
         self.table_widget = table_widget
         self.queried = queried
-        self.setFixedWidth(int(self.table_widget.app.screen_width/2))
         self.build_ui()
 
 
